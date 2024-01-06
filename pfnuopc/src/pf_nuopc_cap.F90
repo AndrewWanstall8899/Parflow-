@@ -32,6 +32,7 @@ module parflow_nuopc
     character(len=64)      :: prep_util          = "none"
     character(len=64)      :: prep_filename      = "none"
     character(len=64)      :: pfidb_filename     = "none"
+    logical                :: multi_instance     = .false.
     logical                :: realize_all_export = .false.
     logical                :: realize_all_import = .false.
     type(field_init_flag)  :: init_export        = FLD_INIT_ZERO
@@ -54,6 +55,13 @@ module parflow_nuopc
   type type_InternalState
     type(type_InternalStateStruct), pointer :: wrap
   end type
+
+  interface
+    integer function local_chdir(path) bind(C, name="chdir")
+      use iso_c_binding
+      character(c_char) :: path(*)
+    end function
+  end interface
 
 !EOP
 
@@ -198,6 +206,12 @@ module parflow_nuopc
         call NUOPC_FreeFormatDestroy(attrFF, rc=rc)
         if (ESMF_STDERRORCHECK(rc)) return  ! bail out
       endif
+
+      ! multiple instances
+      call ESMF_AttributeGet(gcomp, name="multi_instance_gwr", &
+        value=is%wrap%multi_instance, defaultvalue=.false., &
+        convention="NUOPC", purpose="Instance", rc=rc)
+      if (ESMF_STDERRORCHECK(rc)) return  ! bail out
 
       ! realize all import fields
       call ESMF_AttributeGet(gcomp, name="realize_all_import", &
@@ -359,6 +373,9 @@ module parflow_nuopc
           '  Check Import             = ',trim(attval)
         call ESMF_LogWrite(trim(logMsg),ESMF_LOGMSG_INFO)
         write (logMsg, "(A,(A,L1))") trim(cname)//': ', &
+          '  Multiple Instances       = ',is%wrap%multi_instance
+        call ESMF_LogWrite(trim(logMsg),ESMF_LOGMSG_INFO)
+        write (logMsg, "(A,(A,L1))") trim(cname)//': ', &
           '  Realze All Imports       = ',is%wrap%realize_all_import
         call ESMF_LogWrite(trim(logMsg),ESMF_LOGMSG_INFO)
         write (logMsg, "(A,(A,L1))") trim(cname)//': ', &
@@ -422,6 +439,16 @@ module parflow_nuopc
     call ESMF_UserCompGetInternalState(gcomp, label_InternalState, is, rc)
     if (ESMF_STDERRORCHECK(rc)) return  ! bail out
 
+    ! change directory for multiple instances
+    if (is%wrap%multi_instance) then
+      if (btest(verbosity,16)) then
+        call ESMF_LogWrite(trim(cname)//": Change working directory", &
+          ESMF_LOGMSG_INFO)
+      endif
+      call change_directory(trim(cname),rc=rc)
+      if (ESMF_STDERRORCHECK(rc)) return  ! bail out
+    endif
+
     ! determine if component will provide or accept geom
     if (is%wrap%geom_src .eq. GEOM_PROVIDE) then
       is%wrap%transfer_offer="will provide"
@@ -442,6 +469,26 @@ module parflow_nuopc
     if (btest(verbosity,16)) then
       call field_advertise_log(pf_nuopc_fld_list, trim(cname), rc=rc)
     end if
+
+    contains
+
+    !..................................................................
+
+    subroutine change_directory(path,rc)
+      use iso_c_binding
+      character(*), intent(in) :: path
+      integer, intent(out)     :: rc
+
+      rc = local_chdir(path//c_null_char)
+      if (rc /= 0) then
+        call ESMF_LogSetError(rcToCheck=ESMF_RC_ARG_BAD,   &
+          msg="change_directory failed changing to "//trim(path), &
+          CONTEXT, rcToReturn=rc)
+      else
+        rc = ESMF_SUCCESS
+      endif
+
+    end subroutine
 
   end subroutine
 
