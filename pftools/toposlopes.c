@@ -1429,12 +1429,12 @@ int ComputeTestParent(
  *
  *-----------------------------------------------------------------------*/
 
-void ComputeParentMap(int      i,
-                      int      j,
-                      Databox *dem,
-                      Databox *sx,
-                      Databox *sy,
-                      Databox *parentmap)
+void ComputeParentMap(int       i,
+                      int       j,
+                      Databox * dem,
+                      Databox * sx,
+                      Databox * sy,
+                      Databox * parentmap)
 {
   int ii, jj;
   int parent;
@@ -2845,7 +2845,7 @@ void ComputeTopoDeficitToWT(
 
   nx = DataboxNx(mask);
   ny = DataboxNy(mask);
-  
+
   dz = DataboxDz(mask);
 
   // loop over grid, skip nodata/ocean cells
@@ -3223,7 +3223,7 @@ void ComputeSegmentD8(
 
   nx = DataboxNx(dem);
   ny = DataboxNy(dem);
-  
+
   dx = DataboxDx(dem);
   dy = DataboxDy(dem);
 

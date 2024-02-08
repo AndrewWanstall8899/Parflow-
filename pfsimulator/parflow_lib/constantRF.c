@@ -143,8 +143,8 @@ void    ConstantRF(
  * ConstantRFInitInstanceXtra
  *--------------------------------------------------------------------------*/
 
-PFModule  *ConstantRFInitInstanceXtra(Grid *  grid,
-                                      double *temp_data)
+PFModule  *ConstantRFInitInstanceXtra(Grid *   grid,
+                                      double * temp_data)
 {
   PFModule      *this_module = ThisPFModule;
   InstanceXtra  *instance_xtra;

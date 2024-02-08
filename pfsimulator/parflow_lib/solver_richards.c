@@ -150,7 +150,7 @@ typedef struct {
   char *clm_metfile;            /* File name for 1D forcing *or* base name for 2D forcing */
   char *clm_metpath;            /* Path to CLM met forcing file(s) */
   double *sw1d, *lw1d, *prcp1d, /* 1D forcing variables */
-    *tas1d, *u1d, *v1d, *patm1d, *qatm1d, *lai1d, *sai1d, *z0m1d, *displa1d;    /* BH: added lai, sai, z0m, displa */
+         *tas1d, *u1d, *v1d, *patm1d, *qatm1d, *lai1d, *sai1d, *z0m1d, *displa1d; /* BH: added lai, sai, z0m, displa */
 
   int clm_beta_function;        /* CLM evap function for var sat 0=none, 1=linear, 2=cos */
   double clm_res_sat;           /* CLM residual saturation in soil sat units [-] */
@@ -416,7 +416,6 @@ SetupRichards(PFModule * this_module)
           !clmForcingFields[ff].vegetative ||
           (public_xtra->clm_metforce == 3 && public_xtra->clm_forc_veg == 1))
       {
-
         MetadataAddForcingField(
                                 js_inputs,
                                 clmForcingFields[ff].field_name,
@@ -456,7 +455,7 @@ SetupRichards(PFModule * this_module)
   PFModuleInvokeType(SetProblemDataInvoke, set_problem_data, (problem_data));
   ComputeTop(problem, problem_data);
 
-  if(public_xtra->print_top || public_xtra->write_silo_top)
+  if (public_xtra->print_top || public_xtra->write_silo_top)
   {
     ComputePatchTop(problem, problem_data);
   }
@@ -506,7 +505,7 @@ SetupRichards(PFModule * this_module)
                   ProblemDataSpecificStorage(problem_data));
 
     PFModuleOutputStaticType(SaturationOutputStaticInvoke, ProblemSaturation(problem), (file_prefix, problem_data));
-    
+
     // Now add metadata entries:
     static const char* permeability_filenames[] = {
       "perm_x", "perm_y", "perm_z"
@@ -1599,7 +1598,7 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
   int ind_veg;                  /*BH: temporary variable to store vegetation index */
   int Stepcount = 0;            /* Added for transient EvapTrans file management - NBE */
   int Loopcount = 0;            /* Added for transient EvapTrans file management - NBE */
-  double sw=NAN, lw=NAN, prcp=NAN, tas=NAN, u=NAN, v=NAN, patm=NAN, qatm=NAN;   // IMF: 1D forcing vars (local to AdvanceRichards)
+  double sw = NAN, lw = NAN, prcp = NAN, tas = NAN, u = NAN, v = NAN, patm = NAN, qatm = NAN;   // IMF: 1D forcing vars (local to AdvanceRichards)
   double lai[18], sai[18], z0m[18], displa[18]; /*BH: array with lai/sai/z0m/displa values for each veg class */
   double *sw_data = NULL;
   double *lw_data = NULL;
@@ -1624,14 +1623,14 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
 
   /* IMF: For writing CLM output */
   Subvector *eflx_lh_tot_sub, *eflx_lwrad_out_sub, *eflx_sh_tot_sub,
-    *eflx_soil_grnd_sub, *qflx_evap_tot_sub, *qflx_evap_grnd_sub,
-    *qflx_evap_soi_sub, *qflx_evap_veg_sub, *qflx_tran_veg_sub,
-    *qflx_infl_sub, *swe_out_sub, *t_grnd_sub, *tsoil_sub, *irr_flag_sub,
-    *qflx_qirr_sub, *qflx_qirr_inst_sub;
+            *eflx_soil_grnd_sub, *qflx_evap_tot_sub, *qflx_evap_grnd_sub,
+            *qflx_evap_soi_sub, *qflx_evap_veg_sub, *qflx_tran_veg_sub,
+            *qflx_infl_sub, *swe_out_sub, *t_grnd_sub, *tsoil_sub, *irr_flag_sub,
+            *qflx_qirr_sub, *qflx_qirr_inst_sub;
 
   double *eflx_lh, *eflx_lwrad, *eflx_sh, *eflx_grnd, *qflx_tot, *qflx_grnd,
-    *qflx_soi, *qflx_eveg, *qflx_tveg, *qflx_in, *swe, *t_g, *t_soi, *iflag,
-    *qirr, *qirr_inst;
+         *qflx_soi, *qflx_eveg, *qflx_tveg, *qflx_in, *swe, *t_g, *t_soi, *iflag,
+         *qirr, *qirr_inst;
   int clm_file_dir_length;
 
   double print_cdt;
@@ -1642,7 +1641,7 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
   int any_file_dumped;
   int clm_file_dumped;
   int dump_files = 0;
-  
+
   int retval;
   int converged;
   int take_more_time_steps;
@@ -1780,7 +1779,7 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
         dz_dat = SubvectorData(dz_sub);
         //CPS       amps_Printf("Calling oasis send/receive for time  %3.1f \n", t);
         CALL_send_fld2_clm(pp, sp, ms, ix, iy, nx, ny, nz, nx_f, ny_f,
-                           t,po_dat,dz_dat);
+                           t, po_dat, dz_dat);
         amps_Sync(amps_CommWorld);
         CALL_receive_fld2_clm(et, ms, ix, iy, nx, ny, nz, nx_f, ny_f, t);
       }
@@ -2841,25 +2840,25 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
 
             if (k == (nz - 1))
             {
-              vol = dx*dy*dz*dz_dat[ip]*po_dat[ip]*sp[ip];
-              flux_in = dx*dy*dz*dz_dat[ip]*et[ip]*dt;
-              vol_max = dx*dy*dz*dz_dat[ip]*po_dat[ip];
-              press_pred = (flux_in-(vol_max - vol))/(dx*dy*po_dat[ip]);
+              vol = dx * dy * dz * dz_dat[ip] * po_dat[ip] * sp[ip];
+              flux_in = dx * dy * dz * dz_dat[ip] * et[ip] * dt;
+              vol_max = dx * dy * dz * dz_dat[ip] * po_dat[ip];
+              press_pred = (flux_in - (vol_max - vol)) / (dx * dy * po_dat[ip]);
               if (flux_in > (vol_max - vol))
               {
-                if (pp[ip] < 0.0){
-
+                if (pp[ip] < 0.0)
+                {
                   press_pred = public_xtra->surface_predictor_pressure;
-                  if (public_xtra->surface_predictor_print == 1) {
-                    amps_Printf(" Cell vol: %3.6e vol_max: %3.6e flux_in: %3.6e  Pressure: %3.6e I: %d J: %d  \n",vol, vol_max,flux_in,pp[ip],i,j);
+                  if (public_xtra->surface_predictor_print == 1)
+                  {
+                    amps_Printf(" Cell vol: %3.6e vol_max: %3.6e flux_in: %3.6e  Pressure: %3.6e I: %d J: %d  \n", vol, vol_max, flux_in, pp[ip], i, j);
                   }
                   pp[ip] = press_pred;
-
                 }
               }
             }
           }
-        );
+                       );
         }
       }
 
@@ -2966,10 +2965,10 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
     }
 
 
-   /***************************************************************
+    /***************************************************************
     *          modify land surface pressures                      *
     ***************************************************************/
-   
+
     if (public_xtra->reset_surface_pressure == 1)
     {
       GrGeomSolid *gr_domain = ProblemDataGrDomain(problem_data);
@@ -3015,16 +3014,16 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
 
             if (pp_sp[ip] > public_xtra->threshold_pressure)
             {
-              amps_Printf(" time: %10.3f  pressure reset: %d %d %d %10.3f \n",t, i, j, k,
-                     pp_sp[ip]); pp_sp[ip] = public_xtra->reset_pressure;
+              amps_Printf(" time: %10.3f  pressure reset: %d %d %d %10.3f \n", t, i, j, k,
+                          pp_sp[ip]); pp_sp[ip] = public_xtra->reset_pressure;
             }
           }
         }
                      );
       }
-    /* update pressure,  not sure if we need to do this but we might if pressures are reset along processor edges RMM */
-    handle = InitVectorUpdate(instance_xtra->pressure, VectorUpdateAll);
-    FinalizeVectorUpdate(handle);
+      /* update pressure,  not sure if we need to do this but we might if pressures are reset along processor edges RMM */
+      handle = InitVectorUpdate(instance_xtra->pressure, VectorUpdateAll);
+      FinalizeVectorUpdate(handle);
     }
 
 
@@ -3169,7 +3168,6 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
                                 "z-velocity", "m/s", "z-face", "subsurface", 0, NULL);
 
         any_file_dumped = 1;
-
       }
 
 
@@ -3889,10 +3887,10 @@ AdvanceRichards(PFModule * this_module, double start_time,      /* Starting time
       }
     }
 #endif
-    if(first_tstep)
+    if (first_tstep)
     {
       BeginTiming(RichardsExclude1stTimeStepIndex);
-      PUSH_NVTX("RichardsExclude1stTimeStepIndex",6)
+      PUSH_NVTX("RichardsExclude1stTimeStepIndex", 6)
       first_tstep = 0;
     }
   }                             /* ends do for time loop */
@@ -4522,7 +4520,7 @@ SolverRichardsInitInstanceXtra()
 
   /* Compute size for problem parameters */
   parameter_sz = PFModuleSizeOfTempData(instance_xtra->problem_saturation);
-  parameter_sz  += PFModuleSizeOfTempData(instance_xtra->phase_rel_perm);
+  parameter_sz += PFModuleSizeOfTempData(instance_xtra->phase_rel_perm);
 
   /* set temp_data size to max of velocity_sz, concen_sz, and ic_sz. */
   /* The temp vector space for the nonlinear solver is added in because */
@@ -4578,7 +4576,7 @@ SolverRichardsInitInstanceXtra()
   int size_retardation = PFModuleSizeOfTempData(instance_xtra->retardation);
   int size_advect = PFModuleSizeOfTempData(instance_xtra->advect_concen);
   temp_data_placeholder += pfmax(size_retardation, size_advect);
- 
+
   /* set temporary vector data used for advection */
 
   temp_data += temp_data_size;
@@ -4916,7 +4914,7 @@ SolverRichardsNewPublicXtra(char *name)
   switch_name = GetStringDefault(key, "True");
   switch_value = NA_NameToIndexExitOnError(switch_na, switch_name, key);
   public_xtra->write_CLM_binary = switch_value;
-  
+
 /* IMF Account for slope in CLM energy budget (default=False) */
   sprintf(key, "%s.CLM.UseSlopeAspect", name);
   switch_name = GetStringDefault(key, "False");
@@ -5636,8 +5634,8 @@ SolverRichardsNewPublicXtra(char *name)
   switch_value = NA_NameToIndexExitOnError(switch_na, switch_name, key);
   public_xtra->spinup = switch_value;
 
- //RMM surface pressure keys
- //Solver.ResetSurfacePressure “True”
+  //RMM surface pressure keys
+  //Solver.ResetSurfacePressure “True”
   sprintf(key, "%s.ResetSurfacePressure", name);
   switch_name = GetStringDefault(key, "False");
   switch_value = NA_NameToIndexExitOnError(switch_na, switch_name, key);

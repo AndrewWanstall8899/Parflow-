@@ -115,13 +115,14 @@ IDB *IDB_NewDB(char *filename)
   {
     /* Read the key and value from the input file */
     amps_SFBCast(amps_CommWorld, file, invoice);
-    if ((value_len + 1) > IDB_MAX_VALUE_LEN) {
+    if ((value_len + 1) > IDB_MAX_VALUE_LEN)
+    {
       key[key_len] = '\0';
       char s[128];
-      sprintf(s, "%d", IDB_MAX_VALUE_LEN-1);
+      sprintf(s, "%d", IDB_MAX_VALUE_LEN - 1);
       InputError("Error: The value associated with input database "
                  "key <%s> is too long. The maximum length is %s. ",
-                 key, s); 
+                 key, s);
     }
     key[key_len] = '\0';
     value[value_len] = '\0';
@@ -171,9 +172,9 @@ char *IDB_GetString(IDB *database, const char *key)
   }
 }
 
-char *IDB_GetStringDefault(IDB *       database,
-                           const char *key,
-                           char *      default_value)
+char *IDB_GetStringDefault(IDB *        database,
+                           const char * key,
+                           char *       default_value)
 {
   IDB_Entry lookup_entry;
   IDB_Entry *result;
@@ -201,9 +202,9 @@ char *IDB_GetStringDefault(IDB *       database,
   }
 }
 
-double IDB_GetDoubleDefault(IDB *       database,
-                            const char *key,
-                            double      default_value)
+double IDB_GetDoubleDefault(IDB *        database,
+                            const char * key,
+                            double       default_value)
 {
   IDB_Entry lookup_entry;
   IDB_Entry *result;
@@ -273,9 +274,9 @@ double IDB_GetDouble(IDB *database, const char *key)
 }
 
 
-int IDB_GetIntDefault(IDB *       database,
-                      const char *key,
-                      int         default_value)
+int IDB_GetIntDefault(IDB *        database,
+                      const char * key,
+                      int          default_value)
 {
   IDB_Entry lookup_entry;
   IDB_Entry *result;

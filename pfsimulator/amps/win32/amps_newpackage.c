@@ -27,13 +27,13 @@
  **********************************************************************EHEADER*/
 #include "amps.h"
 
-amps_Package amps_NewPackage(amps_Comm     comm,
-                             int           num_send,
-                             int *         dest,
-                             amps_Invoice *send_invoices,
-                             int           num_recv,
-                             int *         src,
-                             amps_Invoice *recv_invoices)
+amps_Package amps_NewPackage(amps_Comm      comm,
+                             int            num_send,
+                             int *          dest,
+                             amps_Invoice * send_invoices,
+                             int            num_recv,
+                             int *          src,
+                             amps_Invoice * recv_invoices)
 {
   amps_Package package;
 

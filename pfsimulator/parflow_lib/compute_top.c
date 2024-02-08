@@ -42,8 +42,8 @@
 
 #include "parflow.h"
 
-void ComputeTop(Problem *    problem,      /* General problem information */
-                ProblemData *problem_data  /* Contains geometry information for the problem */
+void ComputeTop(Problem *     problem,     /* General problem information */
+                ProblemData * problem_data /* Contains geometry information for the problem */
                 )
 {
   GrGeomSolid   *gr_solid = ProblemDataGrDomain(problem_data);

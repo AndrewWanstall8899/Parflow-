@@ -110,17 +110,17 @@ void wrfparflowinit_(char *input_file)
   InitVectorAll(amps_ThreadLocal(evap_trans), 0.0);
 }
 
-void wrfparflowadvance_(double *current_time,
-                        double *dt,
-                        float * wrf_flux,
-                        float * wrf_pressure,
-                        float * wrf_porosity,
-                        float * wrf_saturation,
-                        int *   num_soil_layers,
-                        int *   ghost_size_i_lower,
-                        int *   ghost_size_j_lower,
-                        int *   ghost_size_i_upper,
-                        int *   ghost_size_j_upper)
+void wrfparflowadvance_(double * current_time,
+                        double * dt,
+                        float *  wrf_flux,
+                        float *  wrf_pressure,
+                        float *  wrf_porosity,
+                        float *  wrf_saturation,
+                        int *    num_soil_layers,
+                        int *    ghost_size_i_lower,
+                        int *    ghost_size_j_lower,
+                        int *    ghost_size_i_upper,
+                        int *    ghost_size_j_upper)
 
 {
   ProblemData *problem_data = GetProblemDataRichards(amps_ThreadLocal(solver));
